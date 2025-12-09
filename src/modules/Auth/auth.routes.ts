@@ -3,10 +3,10 @@ import { authController } from "./auth.controller";
 
 const router = Router();
 
+// User Registration
 router.post("/signup", authController.userRegisteration);
 
-// router.post("/signin", async(req:Request, res:Response) => {
-//     res.send("User registration");
-// });
+// User Login
+router.post("/signin", authController.userLogin);
 
 export const authRoutes = router;
