@@ -4,8 +4,8 @@ exports.authRoutes = void 0;
 const express_1 = require("express");
 const auth_controller_1 = require("./auth.controller");
 const router = (0, express_1.Router)();
+// User Registration
 router.post("/signup", auth_controller_1.authController.userRegisteration);
-// router.post("/signin", async(req:Request, res:Response) => {
-//     res.send("User registration");
-// });
+// User Login
+router.post("/signin", auth_controller_1.authController.userLogin);
 exports.authRoutes = router;

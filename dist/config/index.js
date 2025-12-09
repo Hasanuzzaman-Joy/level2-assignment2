@@ -11,5 +11,6 @@ dotenv_1.default.config({
 const config = {
     Port: process.env.PORT || 3000,
     DB_URL: process.env.DB_URL,
+    Jwt_secret: process.env.JWT_SECRET
 };
 exports.default = config;

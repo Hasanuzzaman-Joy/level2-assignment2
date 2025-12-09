@@ -18,6 +18,23 @@ const userRegisteration = async (req, res) => {
         });
     }
 };
+const userLogin = async (req, res) => {
+    const payload = req.body;
+    try {
+        const result = await auth_service_1.AuthService.userLogin(payload);
+        return res.status(200).json({
+            message: "User logged in successfully",
+            result: result
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            message: "Internal Server Error",
+            error: error.message
+        });
+    }
+};
 exports.authController = {
-    userRegisteration
+    userRegisteration,
+    userLogin
 };

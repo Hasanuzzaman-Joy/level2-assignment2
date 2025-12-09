@@ -10,7 +10,10 @@ export const auth =  (...roles: string[]) => {
         }   
 
         try {
-            const decoded = jwt.verify(token, config.Jwt_secret as string); 
+            const decoded = jwt.verify(token, config.Jwt_secret as string);
+
+            req.user = decoded as JwtPayload;
+
             if (!roles.includes((decoded as JwtPayload).role)) {
                 return res.status(403).json({ message: "Forbidden: You don't have enough permissions" });
             }
