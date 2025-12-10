@@ -30,7 +30,7 @@ const userLogin = async (payload) => {
     if (!isPasswordValid) {
         throw new Error("Invalid password");
     }
-    const token = jsonwebtoken_1.default.sign({ name: user.rows[0].name, email: user.rows[0].email, role: user.rows[0].role }, config_1.default.Jwt_secret, { expiresIn: '1h' });
+    const token = jsonwebtoken_1.default.sign({ id: user.rows[0].id, name: user.rows[0].name, email: user.rows[0].email, phone: user.rows[0].phone, role: user.rows[0].role }, config_1.default.Jwt_secret, { expiresIn: '1h' });
     return { token, user: user.rows[0] };
 };
 exports.AuthService = {

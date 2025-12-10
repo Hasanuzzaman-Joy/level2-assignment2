@@ -21,7 +21,18 @@ const getVehicles = async(req:Request, res:Response) => {
     }
 }
 
+const getSingleVehicle = async(req:Request, res:Response) => {
+    const {vehicleId} = req.params;
+    try {
+        const result = await VehiclesService.getSingleVehicle(vehicleId);
+        return res.status(201).send(result.rows[0])
+    } catch (error:any) {
+        res.status(500).send(error.message)
+    }
+}
+
 export const VehiclesController = {
     addVehicle,
-    getVehicles
+    getVehicles,
+    getSingleVehicle
 }

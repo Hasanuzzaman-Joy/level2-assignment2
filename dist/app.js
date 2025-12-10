@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const db_1 = require("./config/db");
 const users_routes_1 = require("./modules/Users/users.routes");
 const auth_routes_1 = require("./modules/Auth/auth.routes");
+const vehicles_routes_1 = require("./modules/Vehicles/vehicles.routes");
 const app = (0, express_1.default)();
 // Middleware to parse JSON bodies
 app.use(express_1.default.json());
@@ -14,5 +15,7 @@ app.use(express_1.default.json());
 app.use("/api/v1/users", users_routes_1.usersRoutes);
 // Use the auth routes
 app.use("/api/v1/auth", auth_routes_1.authRoutes);
+// Use the auth routes
+app.use("/api/v1/vehicles", vehicles_routes_1.VehiclesRoutes);
 (0, db_1.initDB)();
 exports.default = app;

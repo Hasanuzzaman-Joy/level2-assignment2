@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.VehiclesRoutes = void 0;
+const express_1 = require("express");
+const vehicles_controller_1 = require("./vehicles.controller");
+const auth_1 = require("../../middleware/auth");
+const router = (0, express_1.Router)();
+router.post("/", (0, auth_1.auth)("admin"), vehicles_controller_1.VehiclesController.addVehicle);
+router.get("/", vehicles_controller_1.VehiclesController.getVehicles);
+exports.VehiclesRoutes = router;

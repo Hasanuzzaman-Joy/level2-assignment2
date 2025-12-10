@@ -9,4 +9,5 @@ const users_controller_1 = require("./users.controller");
 const auth_1 = require("../../middleware/auth");
 const router = express_1.default.Router();
 router.get("/", (0, auth_1.auth)("admin"), users_controller_1.usersController.getUsers);
+router.put("/:userId", (0, auth_1.auth)("admin", "customer"), users_controller_1.usersController.updateUser);
 exports.usersRoutes = router;

@@ -14,6 +14,7 @@ const auth = (...roles) => {
         }
         try {
             const decoded = jsonwebtoken_1.default.verify(token, config_1.default.Jwt_secret);
+            req.user = decoded;
             if (!roles.includes(decoded.role)) {
                 return res.status(403).json({ message: "Forbidden: You don't have enough permissions" });
             }
