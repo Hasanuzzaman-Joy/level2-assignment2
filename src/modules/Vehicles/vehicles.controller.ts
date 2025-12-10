@@ -11,6 +11,17 @@ const addVehicle = async(req: Request, res:Response) =>{
     }
 }
 
+
+const getVehicles = async(req:Request, res:Response) => {
+    try {
+        const result = await VehiclesService.getVehicles();
+        return res.status(201).send(result.rows)
+    } catch (error:any) {
+        res.status(500).send(error.message)
+    }
+}
+
 export const VehiclesController = {
-    addVehicle
+    addVehicle,
+    getVehicles
 }

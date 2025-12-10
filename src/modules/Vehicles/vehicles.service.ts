@@ -11,6 +11,15 @@ const addVehicle = async(payload: Record<string, unknown>) =>{
     return result;
 };
 
+const getVehicles = async() =>{
+    const result = await pool.query(`
+        SELECT * FROM Vehicles
+    `);
+
+    return result;
+}
+
 export const VehiclesService = {
-    addVehicle
+    addVehicle,
+    getVehicles
 }

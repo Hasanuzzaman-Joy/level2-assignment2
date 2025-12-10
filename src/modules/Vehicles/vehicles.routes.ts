@@ -4,6 +4,8 @@ import { auth } from "../../middleware/auth";
 
 const router = Router();
 
-router.post("/", auth("admin"), VehiclesController.addVehicle)
+router.post("/", auth("admin"), VehiclesController.addVehicle);
 
-export const VehiclesRoutes = router;j
+router.get("/", VehiclesController.getVehicles);
+
+export const VehiclesRoutes = router;
