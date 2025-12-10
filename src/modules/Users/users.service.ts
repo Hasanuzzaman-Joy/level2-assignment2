@@ -25,7 +25,7 @@ const updateUser = async (
       throw new Error("Customers can only update their own profile");
     }
     return await pool.query(
-      "UPDATE users SET name=$1, phone=$2 WHERE id=$3 RETURNING *",
+      "UPDATE users SET name=$1, phone=$2 WHERE id=$3 RETURNING name, email, phone, role",
       [name, phone, userId]
     );
   }
