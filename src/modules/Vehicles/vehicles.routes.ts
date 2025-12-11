@@ -10,4 +10,6 @@ router.get("/", VehiclesController.getVehicles);
 
 router.get("/:vehicleId", VehiclesController.getSingleVehicle);
 
+router.put("/:vehicleId", auth("admin"), VehiclesController.updateVehicle);
+
 export const VehiclesRoutes = router;

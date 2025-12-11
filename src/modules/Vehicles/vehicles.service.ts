@@ -19,7 +19,6 @@ const getVehicles = async() =>{
     return result;
 }
 
-
 const getSingleVehicle = async(id:any) =>{
     const result = await pool.query(`
         SELECT * FROM Vehicles WHERE id=$1
@@ -28,8 +27,22 @@ const getSingleVehicle = async(id:any) =>{
     return result;
 }
 
+const updateVehicle = async(id:any, payload: Record<string, unknown>) =>{
+    
+   payload.type = (payload.type as string).toLowerCase();
+
+   const {vehicle_name, type, registration_number, daily_rent_price, availability_status} = payload
+
+    const result = await pool.query(`
+        UPDATE vehicles SET vehicle_name=$1, type=$2, registration_number=$3, daily_rent_price=$4, availability_status=$5 WHERE id=$6 RETURNING *
+    `, [vehicle_name, type, registration_number, daily_rent_price, availability_status, id]);
+
+    return result;
+}
+
 export const VehiclesService = {
     addVehicle,
     getVehicles,
-    getSingleVehicle
+    getSingleVehicle,
+    updateVehicle
 }
