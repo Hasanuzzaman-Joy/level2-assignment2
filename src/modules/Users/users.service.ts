@@ -32,7 +32,27 @@ const updateUser = async (
   throw new Error("Unauthorized role");
 };
 
+// DELETE User
+const deleteUser = async (userId: string) => {
+  const bookings = await pool.query(
+    `SELECT * FROM Bookings WHERE customer_id = $1`,
+    [userId]
+  );
+
+  const activeBooking = bookings.rows.find(b => b.status === "active");
+  if (activeBooking) {
+    throw new Error("You can't delete a user with active bookings");
+  }
+
+  // Delete the user
+  return await pool.query(
+    `DELETE FROM Users WHERE id = $1`,
+    [userId]
+  );
+};
+
 export const usersService = {
   getUsers,
   updateUser,
+  deleteUser,
 };
