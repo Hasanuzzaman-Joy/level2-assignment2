@@ -2,9 +2,9 @@
 
 A comprehensive backend API for managing vehicle rentals, bookings, and user authentication with role-based access control.
 
-**Live Deployment:** [(https://assignment-2-xi-neon.vercel.app/)]
+**Live Deployment:** https://assignment-2-xi-neon.vercel.app/
 
-**GitHub Repository:** [(https://github.com/Hasanuzzaman-Joy/level2-assignment2)]
+**GitHub Repository:** https://github.com/Hasanuzzaman-Joy/level2-assignment2
 
 ---
 
@@ -421,15 +421,9 @@ This is an assignment project. For questions or issues, please contact the proje
 
 ---
 
-## 📄 License
-
-ISC
-
----
-
 ## 👤 Author
 
-[Hasanuzzaman Joy]
+Hasanuzzaman Joy
 
 ---
 
