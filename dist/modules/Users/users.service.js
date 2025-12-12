@@ -4,24 +4,53 @@ exports.usersService = void 0;
 const db_1 = require("../../config/db");
 //Get Users
 const getUsers = async () => {
-    const result = await db_1.pool.query("SELECT * FROM users");
+    const result = await db_1.pool.query("SELECT * FROM Users");
     return result;
 };
 // Update User
 const updateUser = async (userId, payload, userRole, tokenUserId) => {
-    const { name, email, phone, role } = payload;
+    // Check if user exists
+    const userCheck = await db_1.pool.query(`SELECT * FROM Users WHERE id = $1`, [userId]);
+    if (userCheck.rows.length === 0) {
+        throw new Error("User not found");
+    }
     if (userRole === "admin") {
-        return await db_1.pool.query("UPDATE users SET name=$1, email=$2, phone=$3, role=$4 WHERE id=$5 RETURNING *", [name, email, phone, role, userId]);
+        const { name, email, phone, role } = payload;
+        // Ensure email is lowercase if provided
+        const lowerEmail = email ? email.toLowerCase() : userCheck.rows[0].email;
+        return await db_1.pool.query("UPDATE Users SET name=$1, email=$2, phone=$3, role=$4 WHERE id=$5 RETURNING *", [name, lowerEmail, phone, role, userId]);
     }
     else if (userRole === "customer") {
         if (userId.toString() !== tokenUserId.toString()) {
             throw new Error("Customers can only update their own profile");
         }
-        return await db_1.pool.query("UPDATE users SET name=$1, phone=$2 WHERE id=$3 RETURNING name, email, phone, role", [name, phone, userId]);
+        // Customers cannot update their role - reject if role is provided
+        if (payload.role !== undefined) {
+            throw new Error("Customers cannot update their role");
+        }
+        // Customers can only update name and phone
+        const { name, phone } = payload;
+        return await db_1.pool.query("UPDATE Users SET name=$1, phone=$2 WHERE id=$3 RETURNING id, name, email, phone, role", [name, phone, userId]);
     }
     throw new Error("Unauthorized role");
+};
+// DELETE User
+const deleteUser = async (userId) => {
+    // Check if user exists
+    const userCheck = await db_1.pool.query(`SELECT * FROM Users WHERE id = $1`, [userId]);
+    if (userCheck.rows.length === 0) {
+        throw new Error("User not found");
+    }
+    const bookings = await db_1.pool.query(`SELECT * FROM Bookings WHERE customer_id = $1`, [userId]);
+    const activeBooking = bookings.rows.find(b => b.status === "active");
+    if (activeBooking) {
+        throw new Error("Cannot delete user with active bookings");
+    }
+    // Delete the user
+    return await db_1.pool.query(`DELETE FROM Users WHERE id = $1 RETURNING *`, [userId]);
 };
 exports.usersService = {
     getUsers,
     updateUser,
+    deleteUser,
 };

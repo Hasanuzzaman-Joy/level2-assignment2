@@ -4,12 +4,14 @@ import { JwtPayload } from "jsonwebtoken";
 
 // Get users
 const getUsers = async(req:Request, res:Response) => {
-  const result = await usersService.getUsers();
-
   try {
+    const result = await usersService.getUsers();
     return res.status(200).json(result.rows);
-  } catch (error) {
-    return res.status(500).json({ message: "Internal Server Error" });
+  } catch (error: any) {
+    return res.status(500).json({ 
+      message: "Internal Server Error",
+      error: error.message 
+    });
   }
 };
 

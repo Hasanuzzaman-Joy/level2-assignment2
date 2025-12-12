@@ -38,7 +38,7 @@ const addBookings = async (payload: Record<string, unknown>) => {
   // 4. Insert booking
   const bookingResult = await pool.query(
     `
-      INSERT INTO bookings(customer_id, vehicle_id, rent_start_date, rent_end_date, total_price, status)
+      INSERT INTO Bookings(customer_id, vehicle_id, rent_start_date, rent_end_date, total_price, status)
       VALUES($1, $2, $3, $4, $5, 'active')
       RETURNING *
     `,
@@ -47,7 +47,7 @@ const addBookings = async (payload: Record<string, unknown>) => {
 
   // 5. Update vehicle status
   await pool.query(
-    "UPDATE vehicles SET availability_status='booked' WHERE id=$1",
+    "UPDATE Vehicles SET availability_status='booked' WHERE id=$1",
     [vehicle_id]
   );
 
@@ -61,32 +61,26 @@ const getBookings = async (user: Record<string, unknown>) => {
     SELECT * FROM Bookings
   `);
   } else if (user?.role === "customer") {
-    const email = user.email;
-
-    const matchId = await pool.query(
-      `
-      SELECT id FROM Users WHERE email=$1
-    `,
-      [email]
-    );
-
-    const { id } = matchId.rows[0];
+    // Use id directly from token instead of querying by email
+    const customerId = user.id;
 
     return await pool.query(
       `
-    SELECT * FROM Bookings where customer_id=$1
+    SELECT * FROM Bookings WHERE customer_id=$1
   `,
-      [id]
+      [customerId]
     );
   }
+  throw new Error("Unauthorized");
 };
 
 // UPDATE Bookings
 const updateBookings = async (user: Record<string, unknown>, bookingId:string) => {
+  // Auto-mark expired bookings as returned
   await pool.query(`
     UPDATE Bookings
     SET status = 'returned'
-    WHERE rent_end_date < NOW()
+    WHERE rent_end_date < CURRENT_DATE
       AND status = 'active'
   `);
 
@@ -95,13 +89,13 @@ const updateBookings = async (user: Record<string, unknown>, bookingId:string) =
     SET availability_status = 'available'
     WHERE id IN (
       SELECT vehicle_id FROM Bookings
-      WHERE rent_end_date < NOW()
+      WHERE rent_end_date < CURRENT_DATE
         AND status = 'returned'
     )
   `);
 
   // 1. Get booking info
-  const bookingRes = await pool.query(`SELECT * FROM bookings WHERE id = $1`, [
+  const bookingRes = await pool.query(`SELECT * FROM Bookings WHERE id = $1`, [
     bookingId,
   ]);
 
@@ -138,12 +132,12 @@ const updateBookings = async (user: Record<string, unknown>, bookingId:string) =
   // ADMIN LOGIC
   if (user.role === "admin") {
     await pool.query(
-      `UPDATE bookings SET status='returned' WHERE id=$1`,
+      `UPDATE Bookings SET status='returned' WHERE id=$1`,
       [bookingId]
     );
 
     await pool.query(
-      `UPDATE vehicles SET availability_status='available'
+      `UPDATE Vehicles SET availability_status='available'
        WHERE id=$1`,
       [booking.vehicle_id]
     );

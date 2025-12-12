@@ -4,12 +4,15 @@ exports.usersController = void 0;
 const users_service_1 = require("./users.service");
 // Get users
 const getUsers = async (req, res) => {
-    const result = await users_service_1.usersService.getUsers();
     try {
+        const result = await users_service_1.usersService.getUsers();
         return res.status(200).json(result.rows);
     }
     catch (error) {
-        return res.status(500).json({ message: "Internal Server Error" });
+        return res.status(500).json({
+            message: "Internal Server Error",
+            error: error.message
+        });
     }
 };
 // Update User
@@ -25,7 +28,19 @@ const updateUser = async (req, res) => {
         res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
 };
+// DELETE User
+const deleteUser = async (req, res) => {
+    const paramId = req.params.userId;
+    try {
+        const result = await users_service_1.usersService.deleteUser(paramId);
+        res.status(200).json({ message: `User ${paramId} deleted successfully`, result: result.rows });
+    }
+    catch (error) {
+        res.status(500).json({ message: "Internal Server Error", error: error.message });
+    }
+};
 exports.usersController = {
     getUsers,
-    updateUser
+    updateUser,
+    deleteUser
 };

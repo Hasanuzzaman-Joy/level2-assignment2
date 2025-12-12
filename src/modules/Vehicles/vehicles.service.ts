@@ -2,7 +2,6 @@ import { pool } from "../../config/db";
 
 const addVehicle = async (payload: Record<string, unknown>) => {
   const {
-    id,
     vehicle_name,
     type,
     registration_number,
@@ -58,7 +57,7 @@ const updateVehicle = async (id: any, payload: Record<string, unknown>) => {
 
   const result = await pool.query(
     `
-        UPDATE vehicles SET vehicle_name=$1, type=$2, registration_number=$3, daily_rent_price=$4, availability_status=$5 WHERE id=$6 RETURNING *
+        UPDATE Vehicles SET vehicle_name=$1, type=$2, registration_number=$3, daily_rent_price=$4, availability_status=$5 WHERE id=$6 RETURNING *
     `,
     [
       vehicle_name,
@@ -74,6 +73,16 @@ const updateVehicle = async (id: any, payload: Record<string, unknown>) => {
 };
 
 const deleteVehicle = async (id: any) => {
+  // Check if vehicle exists
+  const vehicleCheck = await pool.query(
+    `SELECT * FROM Vehicles WHERE id = $1`,
+    [id]
+  );
+
+  if (vehicleCheck.rows.length === 0) {
+    throw new Error("Vehicle not found");
+  }
+
   const bookings = await pool.query(
     `SELECT * FROM Bookings WHERE vehicle_id = $1`,
     [id]
@@ -81,11 +90,11 @@ const deleteVehicle = async (id: any) => {
 
   const activeBooking = bookings.rows.find((b) => b.status === "active");
   if (activeBooking) {
-    throw new Error("You can't delete a user with active bookings");
+    throw new Error("Cannot delete vehicle with active bookings");
   }
 
-  // Delete the user
-  return await pool.query(`DELETE FROM Vehicles WHERE id = $1`, [id]);
+  // Delete the vehicle
+  return await pool.query(`DELETE FROM Vehicles WHERE id = $1 RETURNING *`, [id]);
 };
 
 export const VehiclesService = {

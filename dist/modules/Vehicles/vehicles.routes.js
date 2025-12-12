@@ -7,4 +7,7 @@ const auth_1 = require("../../middleware/auth");
 const router = (0, express_1.Router)();
 router.post("/", (0, auth_1.auth)("admin"), vehicles_controller_1.VehiclesController.addVehicle);
 router.get("/", vehicles_controller_1.VehiclesController.getVehicles);
+router.get("/:vehicleId", vehicles_controller_1.VehiclesController.getSingleVehicle);
+router.put("/:vehicleId", (0, auth_1.auth)("admin"), vehicles_controller_1.VehiclesController.updateVehicle);
+router.delete("/:vehicleId", (0, auth_1.auth)("admin"), vehicles_controller_1.VehiclesController.deleteVehicle);
 exports.VehiclesRoutes = router;

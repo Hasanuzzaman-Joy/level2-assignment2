@@ -11,18 +11,22 @@ const config_1 = __importDefault(require("../../config"));
 // User Registration
 const userRegisteration = async (payload) => {
     const { name, email, password, phone, role } = payload;
+    // Ensure email is lowercase
+    const lowerEmail = email.toLowerCase();
     const hashedPassword = await bcrypt_1.default.hash(password, 10);
     const result = await db_1.pool.query(`
         INSERT INTO Users (name, email, password, phone, role) VALUES($1, $2, $3, $4, $5) RETURNING *;
-    `, [name, email, hashedPassword, phone, role]);
+    `, [name, lowerEmail, hashedPassword, phone, role]);
     return result;
 };
 // User Login
 const userLogin = async (payload) => {
     const { email, password } = payload;
+    // Ensure email is lowercase for query
+    const lowerEmail = email.toLowerCase();
     const user = await db_1.pool.query(`
         SELECT * FROM Users WHERE email = $1;
-    `, [email]);
+    `, [lowerEmail]);
     if (user.rows.length === 0) {
         throw new Error("User not found");
     }

@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import { initDB } from './config/db';
 import { usersRoutes } from './modules/Users/users.routes';
 import { authRoutes } from './modules/Auth/auth.routes';
@@ -7,21 +8,17 @@ import { BookingsRoutes } from './modules/Bookings/bookings.routes';
 
 const app = express();
 
-// Middleware to parse JSON bodies
+// Middleware
+app.use(cors());
 app.use(express.json()); 
 
-// Use the users routes
+// Routes
 app.use("/api/v1/users", usersRoutes);
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/vehicles", VehiclesRoutes);
+app.use("/api/v1/bookings", BookingsRoutes);
 
-// Use the auth routes
-app.use("/api/v1/auth", authRoutes)
-
-// Use the auth routes
-app.use("/api/v1/vehicles", VehiclesRoutes)
-
-// Use the bookings routes
-app.use("/api/v1/bookings", BookingsRoutes)
-
+// Initialize database
 initDB();
 
 export default app;

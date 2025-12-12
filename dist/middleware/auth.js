@@ -8,14 +8,21 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../config"));
 const auth = (...roles) => {
     return (req, res, next) => {
-        const token = req.headers.authorization;
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            return res.status(401).json({ message: "Token missing" });
+        }
+        // Extract token from "Bearer <token>" format
+        const token = authHeader.startsWith('Bearer ')
+            ? authHeader.slice(7)
+            : authHeader;
         if (!token) {
             return res.status(401).json({ message: "Token missing" });
         }
         try {
             const decoded = jsonwebtoken_1.default.verify(token, config_1.default.Jwt_secret);
             req.user = decoded;
-            if (!roles.includes(decoded.role)) {
+            if (roles.length > 0 && !roles.includes(decoded.role)) {
                 return res.status(403).json({ message: "Forbidden: You don't have enough permissions" });
             }
             next();
